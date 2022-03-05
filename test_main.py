@@ -71,23 +71,13 @@ def test_simple_tv_show():
     assert file_exists(join(dest_dir, "ep2.mp4"))
     assert file_exists(join(dest_dir, "ep3.mp4"))
 
-def test_simple_tv_show2():
+def test_empty_todo():
     ## Arrange
-    test_tv_show_path = join(TODO_DIR, "Its.Always.Sunny.In.Philadelphia.S05.BDRip.x264-ION10")
-    mkdir(test_tv_show_path)
-
-    mkfile(join(test_tv_show_path, "ep1.mp4"))
-    mkfile(join(test_tv_show_path, "ep2.mp4"))
-    mkfile(join(test_tv_show_path, "ep3.mp4"))
 
     ## Act
     main(MEDIA_DIR)
 
-    ## Assert
-    dest_dir = join(TV_DIR, "It's Always Sunny in Philadelphia", "Season 5")
-    assert file_exists(join(dest_dir, "ep1.mp4"))
-    assert file_exists(join(dest_dir, "ep2.mp4"))
-    assert file_exists(join(dest_dir, "ep3.mp4"))
+
 
 def test_multiple_seasons_tv_show():
     ## Arrange

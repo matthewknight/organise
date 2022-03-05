@@ -52,7 +52,6 @@ def is_structure_valid(media_path):
         return False
 
 def main(media_path):
-    print("Starting organise...")
     if not is_structure_valid:
         print("Media folder structure is invalid, exiting")
     
