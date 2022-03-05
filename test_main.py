@@ -71,12 +71,13 @@ def test_simple_tv_show():
     assert file_exists(join(dest_dir, "ep2.mp4"))
     assert file_exists(join(dest_dir, "ep3.mp4"))
 
+    assert file_exists(test_tv_show_path) == False
+
 def test_empty_todo():
     ## Arrange
 
     ## Act
     main(MEDIA_DIR)
-
 
 
 def test_multiple_seasons_tv_show():

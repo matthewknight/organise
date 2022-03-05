@@ -83,6 +83,10 @@ def main(media_path):
             files_moved += 1
         print(f"Moved {files_moved} files to {season_dir}")
 
+        ## Delete empty todo dir
+        os.rmdir(series_dir)
+        print(f"Deleting {series_dir}")
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description='Media organiser')
