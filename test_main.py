@@ -48,7 +48,8 @@ def test_search(title, expected):
     ("Its.Always.Sunny.in.Philadelphia.S05.1080p.BluRay.x264-TENEIGHTY[rartv]", ("It's Always Sunny in Philadelphia", "Season 5")),
     ("Star.Trek.Discovery.S03.1080p.BluRay.REMUX.AVC.DTS-HD.MA.5.1-BTN[rartv]", ("Star Trek: Discovery", "Season 3")),
     ("Euphoria.US.S01.1080p.WEBRip.x265-RARBG", ("Euphoria", "Season 1")),
-    ("The.Sopranos.S06.1080p.BluRay.x265-RARBG", ("The Sopranos", "Season 6"))
+    ("The.Sopranos.S06.1080p.BluRay.x265-RARBG", ("The Sopranos", "Season 6")),
+    ("Arrested.Development.S04.REMIX.1080p.NF.WEBRip.DD5.1.x264-SKGTV[rartv]", ("Arrested Development", "Season 4"))
 ])
 def test_get_details_from_janky_title(janky_title, expected):
     assert get_details_from_janky_title(janky_title) == expected
@@ -72,6 +73,37 @@ def test_simple_tv_show():
     assert file_exists(join(dest_dir, "ep3.mp4"))
 
     assert file_exists(test_tv_show_path) == False
+
+def test_half_show_moved():
+    ## Arrange
+    test_tv_show_path = join(TODO_DIR, "Star.Trek.Discovery.S03.1080p.BluRay.REMUX.AVC.DTS-HD.MA.5.1-BTN[rartv]")
+    mkdir(test_tv_show_path)
+
+    mkfile(join(test_tv_show_path, "ep3.mp4"))
+    mkfile(join(test_tv_show_path, "ep4.mp4"))
+    mkfile(join(test_tv_show_path, "ep5.mp4"))
+
+    mkdir 
+    show_dest_dir = join(TV_DIR, "Star Trek: Discovery")
+    season_dest_dir = join(show_dest_dir, "Season 3")
+    mkdir(show_dest_dir)
+    mkdir(season_dest_dir)
+    mkfile(join(season_dest_dir, "ep1.mp4"))
+    mkfile(join(season_dest_dir, "ep2.mp4"))
+
+    ## Act
+    main(MEDIA_DIR)
+
+    ## Assert
+    assert file_exists(join(season_dest_dir, "ep1.mp4"))
+    assert file_exists(join(season_dest_dir, "ep2.mp4"))
+    assert file_exists(join(season_dest_dir, "ep3.mp4"))
+    assert file_exists(join(season_dest_dir, "ep4.mp4"))
+    assert file_exists(join(season_dest_dir, "ep5.mp4"))
+
+
+    assert file_exists(test_tv_show_path) == False
+
 
 def test_empty_todo():
     ## Arrange

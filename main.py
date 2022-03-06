@@ -70,8 +70,7 @@ def main(media_path):
         ## Make the inner season dir
         season_dir = join(tv_show_dir, season)
         if os.path.exists(season_dir):
-            print(f"Error: {parsed_title}: {season} folder already exists, skipping to next series")
-            continue
+            print(f"{parsed_title}: {season} folder already exists, moving over additional files...")
         else:
             os.makedirs(season_dir)
             print(f"Created {season_dir}")
