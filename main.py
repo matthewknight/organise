@@ -6,10 +6,13 @@ from os.path import isdir as dir_exists
 import re
 import shutil
 from tmdbv3api import TMDb, TV
+import openai
+import ast
 
 config = configparser.ConfigParser()
 config.read('secret.cfg')
 tmdb = TMDb().api_key = config.get('ClientSecrets', 'tmdb_api_key')
+openai.api_key = config.get('ClientSecrets', 'openai_key')
 
 from constants import *
 
@@ -23,6 +26,7 @@ def get_tv_todo_dir(media_dir):
     return join(media_dir, TV_DIR_NAME, TV_TODO_DIR_NAME)
 
 def search_for_tvshow(search_term):
+    print(f"Searching TMDB for '{search_term}'")
     result = TV().search(search_term)[0].name
     print(f"Found '{result}' for TMDB search '{search_term}'")
     return result
@@ -35,13 +39,20 @@ def get_segment_season_identifer(segment):
     
     return f'Season {search.string.lstrip("S").lstrip("0")}'
 
-def get_details_from_janky_title(janky_title):
-    split_title = [str.capitalize(i) for i in janky_title.split(".")]
-    for index, segment in enumerate(split_title):
-        season = get_segment_season_identifer(segment)
-        if season != None:
-            title = " ".join(split_title[:index])
-            return (search_for_tvshow(title), season)
+def get_details_from_janky_title_v2(janky_title):
+    completion = openai.Completion.create(model="text-davinci-003", \
+        prompt=f"Convert the following directory name into a Python tuple ('<Show Name>', 'Season <Number>'). Only show the season as the number, e.g. 'Season 5'. Don't include the year. {janky_title}")
+    (title, season) = ast.literal_eval(completion.choices[0].text.strip())
+    print(f"OpenAI parsed {janky_title} to '{title}': '{season}'")
+
+    return (search_for_tvshow(title), season)
+
+def get_episode_season_episode_identifier(filename):
+    season_episode_re = r'S\d{2}E\d{2}'
+    search = re.search(season_episode_re, filename)
+    if search is None:
+        return None
+    return search.group()
 
 def is_structure_valid(media_path):
     if (dir_exists(get_movie_dir(media_path)) and
@@ -54,19 +65,19 @@ def is_structure_valid(media_path):
 def main(media_path):
     if not is_structure_valid:
         print("Media folder structure is invalid, exiting")
-    
+
     ## Process TV Show todos
     for series_dir in glob.iglob(join(get_tv_todo_dir(media_path), "**")):
         series_dir_name = series_dir.split("/")[-1]
-        (parsed_title, season) = get_details_from_janky_title(series_dir_name)
+        (parsed_title, season) = get_details_from_janky_title_v2(series_dir_name)
         print(f"Found TV show: {parsed_title}, {season}")
-        
+
         ## Make TV show dir if it doesn't exist
         tv_show_dir = join(get_tv_dir(media_path), parsed_title)
         if not os.path.exists(tv_show_dir):
             os.makedirs(tv_show_dir)
             print(f"Created {tv_show_dir}")
-        
+
         ## Make the inner season dir
         season_dir = join(tv_show_dir, season)
         if os.path.exists(season_dir):
@@ -79,7 +90,12 @@ def main(media_path):
         file_names = os.listdir(series_dir)
         files_moved = 0
         for file_name in file_names:
-            shutil.move(os.path.join(series_dir, file_name), season_dir)
+            file_extension = file_name.split(".")[-1]
+            season_episode_identifier = get_episode_season_episode_identifier(file_name)
+            src = os.path.join(series_dir, file_name)
+            dst = os.path.join(season_dir, f"{parsed_title} {season_episode_identifier}.{file_extension}")
+            print(f"Moving {src} to {dst}")
+            shutil.move(src, dst)
             files_moved += 1
         print(f"Moved {files_moved} files to {season_dir}")
 
