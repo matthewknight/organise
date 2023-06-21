@@ -54,6 +54,7 @@ def test_get_details_from_janky_title_v2(janky_title, expected):
 
 @pytest.mark.parametrize("janky_title, expected", [
     ("'Its.Always.Sunny.in.Philadelphia.S16E02.Frank.Shoots.Every.Member.of.the.Gang.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb[TGx]'", ("S16E02")),
+    ("'Its.Always.Sunny.in.Philadelphia.s16e15.Frank.Shoots.Every.Member.of.the.Gang.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb[TGx]'", ("S16E15")),
 ])
 def test_get_episode_season_episode_identifier(janky_title, expected):
     assert get_episode_season_episode_identifier(janky_title) == expected

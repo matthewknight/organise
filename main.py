@@ -48,11 +48,11 @@ def get_details_from_janky_title_v2(janky_title):
     return (search_for_tvshow(title), season)
 
 def get_episode_season_episode_identifier(filename):
-    season_episode_re = r'S\d{2}E\d{2}'
+    season_episode_re = r'(?i)S\d{2}E\d{2}'
     search = re.search(season_episode_re, filename)
     if search is None:
         return None
-    return search.group()
+    return search.group().upper()
 
 def is_structure_valid(media_path):
     if (dir_exists(get_movie_dir(media_path)) and
@@ -92,6 +92,9 @@ def main(media_path):
         for file_name in file_names:
             file_extension = file_name.split(".")[-1]
             season_episode_identifier = get_episode_season_episode_identifier(file_name)
+            if season_episode_identifier is None:
+                print(f"Not moving {file_name}, can't find identifier")
+                continue
             src = os.path.join(series_dir, file_name)
             dst = os.path.join(season_dir, f"{parsed_title} {season_episode_identifier}.{file_extension}")
             print(f"Moving {src} to {dst}")
