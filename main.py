@@ -41,8 +41,10 @@ def get_segment_season_identifer(segment):
 
 def get_details_from_janky_title_v2(janky_title):
     completion = openai.Completion.create(model="text-davinci-003", \
-        prompt=f"Convert the following directory name into a Python tuple ('<Show Name>', 'Season <Number>'). Only show the season as the number, e.g. 'Season 5'. Don't include the year. {janky_title}")
-    (title, season) = ast.literal_eval(completion.choices[0].text.strip())
+        prompt=f"Convert the following directory name into a Python tuple ('<Show Name>', 'Season <Number>'). Only show the season as the number, e.g. 'Season 5'. If you find the year, e.g. (2023), don't include it. '{janky_title}'")
+    response = completion.choices[0].text
+    print(f"Got raw response from OpenAI {response}")
+    (title, season) = ast.literal_eval(response)
     print(f"OpenAI parsed {janky_title} to '{title}': '{season}'")
 
     return (search_for_tvshow(title), season)

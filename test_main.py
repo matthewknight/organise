@@ -48,6 +48,8 @@ def test_search(title, expected):
     ("Its.Always.Sunny.In.Philadelphia.S05.BDRip.x264-ION10", ("It's Always Sunny in Philadelphia", "Season 5")),
     ("'Its.Always.Sunny.in.Philadelphia.S16E02.Frank.Shoots.Every.Member.of.the.Gang.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb[TGx]'", ("It's Always Sunny in Philadelphia", "Season 16")),
     ("Star.Trek.Discovery.S03.1080p.BluRay.REMUX.AVC.DTS-HD.MA.5.1-BTN[rartv]", ("Star Trek: Discovery", "Season 3")),
+    ('The Bear (2022) Season 2 S02 (1080p HULU WEB-DL x265 HEVC 10bit EAC3 5.1 Silence)', ("The Bear", "Season 2")),
+    ('Its.Always.Sunny.in.Philadelphia.S16E04.Frank.vs.Russia.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb[TGx]', ("It's Always Sunny in Philadelphia", "Season 16")),
 ])
 def test_get_details_from_janky_title_v2(janky_title, expected):
     assert get_details_from_janky_title_v2(janky_title) == expected

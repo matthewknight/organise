@@ -1,5 +1,5 @@
 secret.cfg
-.venv
+venv/
 __pycache__
 .DS_Store
 run.sh
