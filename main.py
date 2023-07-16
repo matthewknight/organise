@@ -105,7 +105,7 @@ def main(media_path):
         print(f"Moved {files_moved} files to {season_dir}")
 
         ## Delete empty todo dir
-        os.rmdir(series_dir)
+        shutil.rmtree(series_dir, ignore_errors=True)
         print(f"Deleting {series_dir}")
 
 if __name__ == "__main__":
